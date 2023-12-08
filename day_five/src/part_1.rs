@@ -323,6 +323,7 @@ fn main()  {
     println!("lowest: {lowest}")
 }
 
+
 fn work_mapping  (num:i64,mapping:&Mapping) ->i64{
     let diff =mapping.dest - mapping.source;
     //println!("{diff} : ");
