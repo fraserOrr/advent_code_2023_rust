@@ -77,7 +77,7 @@ fn main() -> Result<(),Box<dyn std::error::Error>>{
         let rank: i64 = i +1 ;
         let score = hand.bet * rank;
         total= total + score;
-        println!("in rank {:0>2} with hand: {}  --> {} they placed: {:0>4} and scored: {}",rank,hand.card,hand.hand_value,hand.bet,score);
+        println!("in rank {:0>3} with hand: {}  --> {} they placed: {:0>4} and scored: {}",rank,hand.card,hand.hand_value,hand.bet,score);
     }
     
     //249661593
@@ -118,7 +118,7 @@ fn calculate_hand(hand : String,card_order: &Vec<&str>) ->i64{
         for (x  ,rank) in card_order.iter().enumerate(){
             let tmp_x = x as u32;
             if rank == key{
-                card_value = 13 - tmp_x;
+                card_value = 14 - tmp_x;
             }
             if val>&highest_val{
                 highest_val=val.clone()
@@ -161,7 +161,7 @@ fn calculate_hand(hand : String,card_order: &Vec<&str>) ->i64{
   
     
     //println!("most of one card: {}",highest_val);   
-    hand_value =hand_value + highest_val * base.pow(14);
+    hand_value =hand_value + highest_val * base.pow(15);
    // println!("handvalue is: {}",hand_value);
     return hand_value
 }
