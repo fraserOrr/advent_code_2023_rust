@@ -7,9 +7,9 @@ use regex::Regex;
 
 fn main() {
     let mut total=0;
-    let re = Regex::new(r"([0-9]+)").unwrap();
+    let re = Regex::new(r"([-0-9]+)").unwrap();
 
-    if let Ok(lines) = read_lines("./src/input.txt") {
+    if let Ok(lines) = read_lines("./src/test.txt") {
         // Consumes the iterator, returns an (Optional) String
         for (x,line) in lines.enumerate() {
             if let Ok(ip) = line {
