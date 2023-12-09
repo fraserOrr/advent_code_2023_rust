@@ -6,69 +6,55 @@ use std::collections::HashMap;
 
 
 struct Hand{
-    card: String,
-    hand_value: i64,
+    cards: Vec<char>,
+    hand_rank: i64,
     bet: i64,
-    rank: i64,
 }
 
 
 fn main() -> Result<(),Box<dyn std::error::Error>>{
-    let file = File::open("./src/input.txt")?;
+    let file = File::open("./src/test.txt")?;
     let  buf_reader = BufReader::new(file);
     let card_strength: Vec<&str> = Vec::from(["A","K","Q","J","T","9","8","7","6","5","4","3","2"]);
 
     let mut hand_container: Vec<Hand> = vec![];
-    for (count,line) in buf_reader.lines().enumerate() {
+    for (_count,line) in buf_reader.lines().enumerate() {
        //println!("Hand: {}",count);
        let content = line.expect("oops file error");
        let tmp: Vec<&str>  = content.split(" ").collect();
+      
        let tmp_hand = Hand{
-           card: tmp[0].parse::<String>().expect("bad card string"),
-           hand_value: calculate_hand(tmp[0].parse::<String>().expect("bad card string"),&card_strength),
+           
+           cards: tmp[0].parse::<String>().expect("bad card string").to_string().chars().collect(),
+           hand_rank: calculate_hand(tmp[0].parse::<String>().expect("bad card string"),&card_strength),
            bet: tmp[1].parse::<i64>().expect("bad bet"),
-           rank: 0,
+           
        };
        hand_container.push(tmp_hand);
     }
 
-    let tmp = hand_container.get_mut(0).unwrap().hand_value;
-    let digits: Vec<_> = tmp.to_string().chars().map(|d| d.to_digit(10).unwrap()).collect();
     
-    for k in 1..8{
+    hand_container.sort_unstable_by_key(|hand| (hand.hand_rank));
 
-        for j in (0..14).rev(){
-            //let counter = digits.len() - j;
-            loop{
-                let mut swapped=false;
-                for x in 0..hand_container.len()-1{
-                    
-                    let tmp = hand_container.get_mut(x).unwrap().hand_value;
-                    let digits: Vec<u32> = tmp.to_string().chars().map(|d| d.to_digit(10).unwrap()).collect();
-
-                    let tmp2 = hand_container.get_mut(x+1).unwrap().hand_value;
-                    let digits2: Vec<u32> = tmp2.to_string().chars().map(|d| d.to_digit(10).unwrap()).collect();
-
-                    if digits[j] >=k{
-                        if digits[j] > digits2[j]{
-                            //println!("swapping {} with {}",digits[j],digits2[j]);
-                            hand_container.swap(x,x+1);
-                            swapped = true;
-                        }
-                        
+    let swapped = false;
+    loop{
+        for i in 0..hand_container.len()-2{
+            let card1 =  hand_container.get(i).unwrap();
+            let card2 =  hand_container.get(i+1).unwrap().clone();
+            if card1.hand_rank == card2.hand_rank{
+                let sorted = false;
+                while !sorted{
+                    if card1.cards[0] > card2.cards[0]{
+                        hand_container.swap(i,i+1);
                     }
-
-                }
-                if!swapped{
-                    break;
                 }
             }
+        }
 
-            }
-    
-
+        if swapped ==true{
+            break;
+        }
     }
-
 
     let mut total = 0;
     for (x,hand) in hand_container.iter().enumerate().rev(){
@@ -77,7 +63,7 @@ fn main() -> Result<(),Box<dyn std::error::Error>>{
         let rank: i64 = i +1 ;
         let score = hand.bet * rank;
         total= total + score;
-        println!("in rank {:0>3} with hand: {}  --> {} they placed: {:0>4} and scored: {}",rank,hand.card,hand.hand_value,hand.bet,score);
+        println!("in rank {:0>3} with hand: {:?}  --> {} they placed: {:0>4} and scored: {}",rank,hand.cards,hand.hand_rank,hand.bet,score);
     }
     
     //249661593
@@ -90,7 +76,7 @@ fn calculate_hand(hand : String,card_order: &Vec<&str>) ->i64{
     
     let hand_capt: Vec<&str>  = hand.split("").collect();
     let base: i64 = 10;
-    let mut hand_value: i64 = 0;
+    let mut hand_rank: i64 = 0;
     for (x,_) in hand_capt.iter().enumerate(){
         let key = hand_capt[x];
         if !key.is_empty(){
@@ -118,16 +104,15 @@ fn calculate_hand(hand : String,card_order: &Vec<&str>) ->i64{
         for (x  ,rank) in card_order.iter().enumerate(){
             let tmp_x = x as u32;
             if rank == key{
-                card_value = 14 - tmp_x;
+                card_value = 13 - tmp_x;
             }
             if val>&highest_val{
                 highest_val=val.clone()
             }
         }
-        let val_2 = val.clone() as u32;
-        let cval_2 = card_value as i64;
-        hand_value = hand_value + (val * base.pow(card_value));
-        //hand_value = hand_value + (1*cval_2 * base.pow(11+ val_2));
+       
+        hand_rank = hand_rank + (val * base.pow(card_value));
+        
 
     }
  
@@ -135,7 +120,7 @@ fn calculate_hand(hand : String,card_order: &Vec<&str>) ->i64{
         highest_val +=2;
     }else if highest_val ==3{
         highest_val +=1;
-        for (key, val) in card_calc.iter() {
+        for (_key, val) in card_calc.iter() {
             let num_match =2;
             if &num_match  == val{
                 highest_val +=1;
@@ -146,7 +131,7 @@ fn calculate_hand(hand : String,card_order: &Vec<&str>) ->i64{
         
     }else if highest_val ==2{
         let mut counter =0;
-        for (key, val) in card_calc.iter() {
+        for (_key, val) in card_calc.iter() {
             let num_match =2;
             if &num_match  == val{
                 counter +=1;
@@ -161,9 +146,9 @@ fn calculate_hand(hand : String,card_order: &Vec<&str>) ->i64{
   
     
     //println!("most of one card: {}",highest_val);   
-    hand_value =hand_value + highest_val * base.pow(15);
-   // println!("handvalue is: {}",hand_value);
-    return hand_value
+   // hand_rank =hand_rank + highest_val * base.pow(15);
+   // println!("handvalue is: {}",hand_rank);
+    return highest_val
 }
 
 
