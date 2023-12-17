@@ -58,6 +58,9 @@ fn computer_permutation(compute_segments: Vec<String>,computer_params: Vec<i32> 
          let f = tmp.first().unwrap().0;
          let l = tmp.last().unwrap().0;
          let span = 1 + (l-f);
+         if span < segment.len(){
+             total=total * (f);
+         }
 
        }
    }
