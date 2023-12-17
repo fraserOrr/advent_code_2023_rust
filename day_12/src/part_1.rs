@@ -30,41 +30,82 @@ fn main() -> Result<(),Box<dyn std::error::Error>>{
 
         if compute_segments.len() == computer_params.len() {
             total_perms += computer_permutation(compute_segments,computer_params)
+        }else{
+            total_perms += harder_permutation(compute_segments,computer_params)
         }
     }
    
     
-    
+    println!("Grand total: {}", total_perms);
 
    
     Ok(())
 
 }
+fn harder_permutation(compute_segments: Vec<String>,computer_params: Vec<i32> ) -> i32{
+    //we need to break the big string dwon into possible blocks then user the other permutation functions
 
+    0
+}
 fn computer_permutation(compute_segments: Vec<String>,computer_params: Vec<i32> ) -> i32 {
    let mut total: i32 = 1;
 
-   for i in 0..(computer_params.len()-1){
+   for i in 0..(computer_params.len()){
        let param = computer_params.get(i).unwrap();
        let segment = compute_segments.get(i).unwrap();
        
        let replaceables: Vec<&str> = segment.matches("?").collect();
-       
+       //println!("param {} and segment {}", param, segment);
        if replaceables.len() == segment.len(){
           
            total=total * ((segment.len() as i32 + 1)-param);
        }else{
-         let tmp: Vec<_> = segment. match_indices("#").collect();
-         let f = tmp.first().unwrap().0;
-         let l = tmp.last().unwrap().0;
-         let span = 1 + (l-f);
-         if span < segment.len(){
-             total=total * (f);
-         }
+            let returner = singler_permutation(segment.clone(), param.clone());
+
+            total = total * returner
+            
+                  
 
        }
    }
 
-   println!("{total}");
+   println!("total for this type is: {total}");
    return total
+}
+
+fn singler_permutation(segment: String, param: i32) -> i32 {
+    let tmp: Vec<_> = segment. match_indices("#").collect();
+    let f = tmp.first().unwrap().0 as i32;
+    let l = tmp.last().unwrap().0 as i32;
+    let span = 1 + (l-f);
+        //println!("p: {}, f: {}, l: {}, span: {}, segment: {}", param,f,l,span,segment.len());
+    if span < segment.len() as i32{
+        let wiggle_room = param - (1 + (l-f));
+         //  println!("wiggle room {}", wiggle_room);
+        if wiggle_room > 0{
+            let mut multi: i32 = 0;
+            if f > 0{
+                if wiggle_room < f +1 {
+                        multi += wiggle_room;
+                }else{
+                        multi+= f + 1;
+                }
+            }
+            if l < segment.len() as i32 -1 {
+                if wiggle_room < (segment.len() as i32 - (l+1)){
+                    multi+= wiggle_room
+                }else{
+                        multi+= segment.len() as i32 - (l+1);
+                }
+            }
+            return multi
+        }else{
+            1
+        }
+    }else{
+        1
+    }
+        
+
+    
 }
