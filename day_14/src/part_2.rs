@@ -2,9 +2,7 @@ use std::fs::File;
 use std::vec::Vec;
 use std::io::prelude::*;
 use std::io::BufReader;
-use std::collections::HashMap;
-use std::collections::hash_map::DefaultHasher;
-use std::hash::{Hash, Hasher};
+use indexmap::IndexMap;
 
 /*
 fn calculate_hash<T: Hash>(t: &T) -> u64 {
@@ -14,10 +12,10 @@ fn calculate_hash<T: Hash>(t: &T) -> u64 {
 }*/
 
 fn main() -> Result<(),Box<dyn std::error::Error>>{
-    let file = File::open("./src/test.txt")?;
+    let file = File::open("./src/input.txt")?;
     let  buf_reader = BufReader::new(file);
     let mut char_map: Vec<Vec<char>> = vec![];
-    let mut value_mapping: HashMap<Vec<Vec<char>>,i64> = HashMap::new();
+    let mut value_mapping: IndexMap<Vec<Vec<char>>,i64> = IndexMap::new();
 
     for line in buf_reader.lines() {
        char_map.push(line.expect("something there").chars().collect());
@@ -29,7 +27,7 @@ fn main() -> Result<(),Box<dyn std::error::Error>>{
     let mut found_loop = false;
     let mut hash_pointer = 0;
     let mut pos = 0; 
-    for loop_count in 0..1000000000{
+    for loop_count in 1..1000000001{
         if found_loop == false{
             char_map = one_loop(char_map);
             let mut total: i64 = 0;
@@ -80,14 +78,14 @@ fn main() -> Result<(),Box<dyn std::error::Error>>{
     }
     
 
-    print!("Hash pointer landed on: {hash_pointer}");
+    println!("Hash pointer landed on: {hash_pointer}");
     let vec: Vec<i64> = value_mapping.into_values().collect();
     
     for (i,value) in vec.iter().enumerate(){
         println!("{i} {value}");
         if i == hash_pointer{
             println!("End value is {}", value);
-            break;
+            
         }
     }
 
