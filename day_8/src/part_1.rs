@@ -15,7 +15,7 @@ fn main() {
     let re = Regex::new(r"([A-Z]{3})").unwrap();
     let mut instructions: Vec<String> = vec![];
     let mut map: Vec<Node> = vec![];
-    if let Ok(lines) = read_lines("./src/input.txt") {
+    if let Ok(lines) = read_lines("./src/input_jordan.txt") {
         // Consumes the iterator, returns an (Optional) String
         for (x,line) in lines.enumerate() {
             if let Ok(ip) = line {

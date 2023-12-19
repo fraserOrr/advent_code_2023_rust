@@ -44,6 +44,12 @@ fn main() -> Result<(),Box<dyn std::error::Error>>{
 }
 fn harder_permutation(compute_segments: Vec<String>,computer_params: Vec<i32> ) -> i32{
     //we need to break the big string dwon into possible blocks then user the other permutation functions
+    let mut total_block_size: i32 = 0;
+    for param in computer_params.iter(){
+        total_block_size += param 
+    }
+    total_block_size += computer_params.len().clone() as i32 - 1;
+
 
     0
 }
