@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-
+regex = "1.10.2"
 
 
 
@@ -18,3 +18,8 @@ path="./src/part_1.rs"
 [[bin]]
 name="part_2"
 path="./src/part_2.rs"
+
+[[bin]]
+name="test"
+path="./src/part_2_test.rs"
+
